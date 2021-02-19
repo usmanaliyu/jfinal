@@ -19,6 +19,11 @@
     <div class="zigzag-bottom"></div>
     <div class="container">
         <div class="row">
+            <form action="{% url 'core:search' %}" method="GET">
+                <input name="search_term" type="text" placeholder="Search here.." >
+                <button type="submit" name="button">Submit</button>
+              </form>
+          
 
             {% for item in object_list %}
             <div class="col-md-3 col-sm-6">
@@ -52,23 +57,29 @@
             <div class="col-md-12">
                 <div class="product-pagination text-center">
                     <nav>
+                        {% if is_paginated %}
                       <ul class="pagination">
+                        {% if page_obj.has_previous %}
                         <li>
-                          <a href="#" aria-label="Previous">
+                          <a href="?page={{page_obj.previous_page_number}}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
+                        <li><a href="?page={{page_obj.previous_page_number}}">{{page_obj.previous_page_number}}</a></li>
+                        {% endif %}
+                        {% if page_obj.has_next %}
+                        <li><a href="?page={{page_obj.next_page_number}}">{{page_obj.next_page_number}}</a></li>
                         <li><a href="#">3</a></li>
                         <li><a href="#">4</a></li>
                         <li><a href="#">5</a></li>
                         <li>
-                          <a href="#" aria-label="Next">
+                          <a href="?page={{page_obj.next_page_number}}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
+                          {% endif %}
                         </li>
                       </ul>
+                      {% endif %}
                     </nav>                        
                 </div>
             </div>

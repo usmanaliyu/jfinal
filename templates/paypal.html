@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block content %}
+	
+<div class="single-product-area">
+    <div class="zigzag-bottom"></div>
+    <div class="container">
+        <div class="row">
+
+                <div class="col-md-8">
+                    <div class="product-content-right">
+                        <div class="woocommerce">
+                           
+
+                            <div >
+
+
+                           
+
+                            <div class="cart_totals ">
+                            
+                                <h2>Cart Totals</h2>
+
+                                <table cellspacing="0">
+                                    <tbody>
+                                        {% if object.get_total %}
+                                        <tr class="cart-subtotal">
+                                            <th>Cart Subtotal</th>
+                                            <td><span class="amount">${{ object.get_total }}</span></td>
+                                        </tr>
+
+                                        <tr class="shipping">
+                                            <th>Discount</th>
+                                            {% if object.coupon %}
+                                            <td>-${{ object.coupon.amount }}</td>
+                                            {% else %}
+                                            <td>No coupon Applied</td>
+                                            {% endif %}
+                                        </tr>
+
+                                        <tr class="order-total">
+                                            <th>Order Total</th>
+                                            <td><strong><span class="amount">${{ object.get_total }}</span></strong> </td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table></br>
+                                <div id="paypal-button-container"></div>
+                            </div>
+
+                            
+                            
+
+
+                            </div>
+                        </div>                        
+                    </div>                    
+                </div>
+</div></div>
+
+
+     
+
+      <script src="https://www.paypal.com/sdk/js?client-id=AddT4qJ7qq-2TwoFeFwIQh8o92rGU5oJ_jJoW_SDMas7VjeUy2wLLdU3bFPX-SNXr6eESeqAYE3xH7Bn&currency=USD&disable-funding=credit"></script>
+
+<script>
+
+    function getCookie(name) {
+       var cookieValue = null;
+       if (document.cookie && document.cookie !== '') {
+           var cookies = document.cookie.split(';');
+           for (var i = 0; i < cookies.length; i++) {
+               var cookie = cookies[i].trim();
+               // Does this cookie string begin with the name we want?
+               if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                   cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                   break;
+               }
+           }
+       }
+       return cookieValue;
+   }
+   var csrftoken = getCookie('csrftoken');
+
+   var total = '{{object.get_total}}'
+    var orderId = '{{object.id}}'
+
+    function completeOrder(){
+        var url = "{% url 'core:complete' %}"
+        
+
+        fetch(url, {
+            method:'POST',
+            headers:{
+                'Content-type':'application/json',
+                'X-CSRFToken':csrftoken,
+            },
+            body:JSON.stringify({'orderId':orderId})
+        })
+    }
+
+
+   // Render the PayPal button into #paypal-button-container
+   paypal.Buttons({
+
+       // Set up the transaction
+       createOrder: function(data, actions) {
+           return actions.order.create({
+               purchase_units: [{ 
+                   amount: {
+                       value: total
+                   }
+               }]
+           });
+       },
+
+       // Finalize the transaction
+       onApprove: function(data, actions) {
+           return actions.order.capture().then(function(details) {
+               // Show a success message to the buyer
+               completeOrder()
+               alert('Transaction completed by ' + details.payer.name.given_name + '!');
+           });
+       }
+
+
+   }).render('#paypal-button-container');
+</script>
+
+{% endblock %}

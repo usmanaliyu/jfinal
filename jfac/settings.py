@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_countries',
     'core',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,4 @@ LOGIN_REDIRECT_URL = '/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
+STATIC_ROOT = 'static'
